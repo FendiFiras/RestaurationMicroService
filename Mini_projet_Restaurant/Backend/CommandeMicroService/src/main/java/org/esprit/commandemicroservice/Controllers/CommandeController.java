@@ -1,5 +1,6 @@
 package org.esprit.commandemicroservice.Controllers;
 
+import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.esprit.commandemicroservice.Entites.Commande;
 import org.esprit.commandemicroservice.Entites.ModePaiement;
@@ -16,6 +17,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
 import java.io.*;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/commande")
@@ -25,22 +27,22 @@ public class CommandeController {
 
       ICommandeService commandeService;
 
-    @PostMapping
+    @PostMapping("addCommande")
     public Commande createCommande(@RequestBody Commande commande) {
         return commandeService.saveCommande(commande);
     }
 
-    @GetMapping
+    @GetMapping("Gett_All_Commandes")
     public List<Commande> getAllCommandes() {
         return commandeService.getAllCommandes();
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("GetoneByID/{id}")
     public Commande getCommandeById(@PathVariable Long id) {
         return commandeService.getCommandeById(id);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("Supprimer/{id}")
     public void deleteCommande(@PathVariable Long id) {
         commandeService.deleteCommande(id);
     }
@@ -64,7 +66,7 @@ public class CommandeController {
 
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("Update/{id}")
     public ResponseEntity<Commande> updateCommande(@PathVariable Long id, @RequestBody Commande newCommande) {
         Commande updated = commandeService.updateCommande(id, newCommande);
         return ResponseEntity.ok(updated);
@@ -84,5 +86,14 @@ public class CommandeController {
     public List<Commande> getCommandesByModePaiement(@RequestParam ModePaiement modePaiement) {
         return commandeService.findByModePaiement(modePaiement);
     }
+
+
+    @PostMapping("/partagee/save")
+    public ResponseEntity<List<Commande>> sauvegarderCommandePartagee(@RequestBody Map<String, Object> body) {
+        List<Map<String, Object>> participants = (List<Map<String, Object>>) body.get("participants");
+        List<Commande> commandes = commandeService.saveCommandePartagee(participants);
+        return ResponseEntity.ok(commandes);
+    }
+
 
 }

@@ -12,6 +12,13 @@ import java.util.List;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.*;
 import java.io.FileOutputStream;
+
+import java.util.Map;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+
 @Service
 
 public class CommandeService implements ICommandeService {
@@ -30,17 +37,27 @@ public class CommandeService implements ICommandeService {
 
     @Override
     public Commande saveCommande(Commande commande) {
-        // Générer la date et numéro
+        // Générer la date et le numéro de commande
         commande.setDateCommande(new Date());
         commande.setNumeroCommande("CMD-" + System.currentTimeMillis());
 
-        // ⚠️ Validation métier : pas de livraison si A_EMPORTER
+        // Si c'est une commande à emporter, on supprime l'id de livraison
         if (commande.getTypeCommande() == TypeCommande.A_EMPORTER) {
-            commande.setIdLivraison(null); // on efface l'id livraison s’il est présent
+            commande.setIdLivraison(null);
         }
+
+        // ✅ Calcul automatique du total selon les plats
+        double total = 0.0;
+        if (commande.getIdPlats() != null) {
+            for (Long idPlat : commande.getIdPlats()) {
+                total += platServiceFake.getPrixPlat(idPlat);
+            }
+        }
+        commande.setTotal(total);
 
         return commandeRepository.save(commande);
     }
+
 
     @Override
     public List<Commande> getAllCommandes() {
@@ -197,7 +214,40 @@ public class CommandeService implements ICommandeService {
     public List<Commande> findByModePaiement(ModePaiement modePaiement) {
         return commandeRepository.findByModePaiement(modePaiement);
     }
+    @Override
+    public List<Commande> saveCommandePartagee(List<Map<String, Object>> participants) {
+        List<Commande> commandes = new ArrayList<>();
 
+        for (Map<String, Object> participant : participants) {
+            Long idUser = Long.valueOf(participant.get("idUser").toString());
+            List<Integer> idPlatsRaw = (List<Integer>) participant.get("idPlats");
+            Long idLivraison = Long.valueOf(participant.get("idLivraison").toString());
+
+            List<Long> idPlats = idPlatsRaw.stream()
+                    .map(Long::valueOf)
+                    .toList();
+
+            double total = idPlats.stream()
+                    .mapToDouble(id -> platServiceFake.getPrixPlat(id))
+                    .sum();
+
+            Commande commande = new Commande();
+            commande.setIdUser(idUser);
+            commande.setIdPlats(idPlats);
+            commande.setIdLivraison(idLivraison);
+
+            commande.setTotal(total);
+            commande.setDateCommande(new Date());
+            commande.setStatut("EN_ATTENTE_VALIDATION");
+            commande.setNumeroCommande("CMD-" + System.currentTimeMillis());
+            commande.setModePaiement(ModePaiement.CARTE); // ou autre par défaut
+            commande.setTypeCommande(TypeCommande.LIVRAISON); // ou autre
+
+            commandes.add(commandeRepository.save(commande));
+        }
+
+        return commandes;
+    }
 
 }
 
