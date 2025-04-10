@@ -2,8 +2,10 @@ package org.esprit.menumicroservice.Services;
 
 import org.esprit.menumicroservice.Entities.Menu;
 import org.esprit.menumicroservice.Entities.Plat;
+import org.esprit.menumicroservice.Entities.PlatSpecification;
 import org.esprit.menumicroservice.Repo.MenuRepository;
 import org.esprit.menumicroservice.Repo.PlatRepository;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,6 +14,7 @@ import java.util.List;
 public class PlatService {
     private final PlatRepository platRepository;
     private final MenuRepository menuRepository; // Inject MenuRepository to fetch the Menu by id
+
 
     public PlatService(PlatRepository platRepository, MenuRepository menuRepository) {
         this.platRepository = platRepository;
@@ -56,5 +59,13 @@ public class PlatService {
             return platRepository.save(plat); // Save and return the updated plat
         }
         return null; // Return null if plat not found
+    }
+
+    // Recherche des plats avec critères par nom ou prix
+    public List<Plat> searchPlats(String nom, Double prixMax) {
+        Specification<Plat> specification = Specification.where(PlatSpecification.hasNom(nom))
+                .and(PlatSpecification.hasPrixMax(prixMax));
+
+        return platRepository.findAll(specification);
     }
 }

@@ -2,6 +2,7 @@ package org.esprit.menumicroservice.Entities;
 
 import jakarta.persistence.*;
 import org.esprit.menumicroservice.Entities.Plat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.List;
 
@@ -17,6 +18,7 @@ public class Menu {
     private String description;
 
     @OneToMany(mappedBy = "menu", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Plat> plats;
 
     // === Getters & Setters ===

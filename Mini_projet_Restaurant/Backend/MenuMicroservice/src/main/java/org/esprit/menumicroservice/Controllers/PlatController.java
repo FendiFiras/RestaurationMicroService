@@ -15,6 +15,14 @@ public class PlatController {
         this.platService = platService;
     }
 
+
+    // Recherche avancée de plats (par nom ou prix)
+    @GetMapping("/search")
+    public List<Plat> searchPlats(@RequestParam(required = false) String nom,
+                                  @RequestParam(required = false) Double prixMax) {
+        return platService.searchPlats(nom, prixMax);
+    }
+
     @GetMapping("GetAllPlats")
     public List<Plat> getAllPlats() {
         return platService.getAllPlats();
