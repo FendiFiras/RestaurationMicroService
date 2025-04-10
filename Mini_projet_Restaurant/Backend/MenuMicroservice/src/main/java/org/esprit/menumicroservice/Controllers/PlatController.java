@@ -48,4 +48,11 @@ public class PlatController {
     public Plat updatePlat(@PathVariable Long id, @RequestBody Plat platDetails) {
         return platService.updatePlat(id, platDetails);
     }
+
+    @GetMapping("/Surprise Dish")
+    public Plat rouletteDuPlatMystere() {
+        return platService.getPlatMystereAvecReduction();
+    }
+
+
 }

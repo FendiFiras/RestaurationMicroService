@@ -9,6 +9,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Random;
 
 @Service
 public class PlatService {
@@ -68,4 +69,29 @@ public class PlatService {
 
         return platRepository.findAll(specification);
     }
+
+    public Plat getPlatMystereAvecReduction() {
+        List<Plat> plats = platRepository.findAll();
+        if (plats.isEmpty()) {
+            return null;
+        }
+
+        // Choisir un plat aléatoire
+        Plat platChoisi = plats.get((int) (Math.random() * plats.size()));
+
+        // Appliquer une réduction de 30% sur le prix
+        Plat platAvecReduction = new Plat();
+        platAvecReduction.setIdPlat(platChoisi.getIdPlat());
+        platAvecReduction.setNom(platChoisi.getNom());
+        platAvecReduction.setDescription(platChoisi.getDescription());
+        platAvecReduction.setMenu(platChoisi.getMenu());
+
+        // ✅ Réduction de 30%
+        Double prixReduit = platChoisi.getPrix() * 0.70;
+        platAvecReduction.setPrix(Math.round(prixReduit * 100.0) / 100.0);
+
+        return platAvecReduction;
+    }
+
+
 }
