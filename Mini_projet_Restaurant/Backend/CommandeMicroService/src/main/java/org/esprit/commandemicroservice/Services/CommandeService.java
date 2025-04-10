@@ -1,6 +1,7 @@
 package org.esprit.commandemicroservice.Services;
 
 import org.esprit.commandemicroservice.Entites.Commande;
+import org.esprit.commandemicroservice.Entites.ModePaiement;
 import org.esprit.commandemicroservice.Entites.TypeCommande;
 import org.esprit.commandemicroservice.Repository.CommandeRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -183,6 +184,20 @@ public class CommandeService implements ICommandeService {
 
         return filePath;
     }
+    @Override
+    public List<Commande> getCommandesSortedByTotal(String order) {
+        if ("asc".equalsIgnoreCase(order)) {
+            return commandeRepository.findAllByOrderByTotalAsc();
+        } else if ("desc".equalsIgnoreCase(order)) {
+            return commandeRepository.findAllByOrderByTotalDesc();
+        } else {
+            throw new IllegalArgumentException("Valeur 'order' invalide. Utilisez 'asc' ou 'desc'.");
+        }
+    }
+    public List<Commande> findByModePaiement(ModePaiement modePaiement) {
+        return commandeRepository.findByModePaiement(modePaiement);
+    }
+
 
 }
 

@@ -2,6 +2,7 @@ package org.esprit.commandemicroservice.Controllers;
 
 import lombok.RequiredArgsConstructor;
 import org.esprit.commandemicroservice.Entites.Commande;
+import org.esprit.commandemicroservice.Entites.ModePaiement;
 import org.esprit.commandemicroservice.Services.ICommandeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -70,6 +71,18 @@ public class CommandeController {
     }
 
 
-
+    @GetMapping("/sorted")
+    public ResponseEntity<List<Commande>> getCommandesSorted(@RequestParam String order) {
+        try {
+            List<Commande> commandes = commandeService.getCommandesSortedByTotal(order);
+            return ResponseEntity.ok(commandes);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(null);
+        }
+    }
+    @GetMapping("/filter-by-mode")
+    public List<Commande> getCommandesByModePaiement(@RequestParam ModePaiement modePaiement) {
+        return commandeService.findByModePaiement(modePaiement);
+    }
 
 }

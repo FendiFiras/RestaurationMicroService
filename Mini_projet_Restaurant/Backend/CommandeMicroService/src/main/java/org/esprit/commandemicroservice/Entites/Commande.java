@@ -1,6 +1,7 @@
 package org.esprit.commandemicroservice.Entites;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -37,12 +38,15 @@ public class Commande {
 
 
     private String numeroCommande;
+    @JsonIgnore
 
     @Transient
     private String nomUser;
+    @JsonIgnore
 
     @Transient
     private List<String> nomsPlats;
+    @JsonIgnore
 
     @Transient
     private String nomLivreur;

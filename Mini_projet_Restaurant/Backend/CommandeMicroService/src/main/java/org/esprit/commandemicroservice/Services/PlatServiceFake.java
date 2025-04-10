@@ -16,6 +16,8 @@ public class PlatServiceFake {
         fakePlats.put(2L, "Tacos Viande Hachée");
         fakePlats.put(3L, "Couscous Royal");
         fakePlats.put(4L, "Burger Poulet");
+        fakePlats.put(5L, "Pasta Sauce Blanche");
+
     }
 
     public String getNomPlat(Long idPlat) {
