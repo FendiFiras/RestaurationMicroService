@@ -10,6 +10,7 @@
         <option value="$PROJECT_DIR$/Mini_projet_Restaurant/Backend/User_MicroService/pom.xml" />
         <option value="$PROJECT_DIR$/Mini_projet_Restaurant/Backend/CommandeMicroService/pom.xml" />
         <option value="$PROJECT_DIR$/Mini_projet_Restaurant/Backend/eureka/pom.xml" />
+        <option value="$PROJECT_DIR$/Mini_projet_Restaurant/Backend/MenuMicroservice/pom.xml" />
       </list>
     </option>
   </component>

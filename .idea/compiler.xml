@@ -9,25 +9,30 @@
         <module name="Gateway" />
         <module name="eureka" />
       </profile>
-      <profile name="Annotation profile for CommandeMicroService" enabled="true">
+      <profile name="Annotation profile for MenuMicroservice" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="false">
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/unknown/lombok-unknown.jar" />
         </processorPath>
+        <module name="MenuMicroservice" />
         <module name="User_MicroService" />
         <module name="AvisMicroService" />
         <module name="CommandeMicroService" />
         <module name="ReservationMicroservice" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="LivraisonMicroService" target="17" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="AvisMicroService" options="-parameters" />
       <module name="CommandeMicroService" options="-parameters" />
       <module name="Gateway" options="-parameters" />
+      <module name="MenuMicroservice" options="-parameters" />
       <module name="ReservationMicroservice" options="-parameters" />
       <module name="User_MicroService" options="-parameters" />
       <module name="eureka" options="-parameters" />
