@@ -32,8 +32,19 @@ public class Commande {
 
     @Enumerated(EnumType.STRING)
     private ModePaiement modePaiement;
+    @Enumerated(EnumType.STRING)
+    private TypeCommande typeCommande; // ✅ ICI le nouveau champ
+
 
     private String numeroCommande;
 
+    @Transient
+    private String nomUser;
+
+    @Transient
+    private List<String> nomsPlats;
+
+    @Transient
+    private String nomLivreur;
 
 }
