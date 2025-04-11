@@ -11,8 +11,8 @@
 	<groupId>org.esprit</groupId>
 	<artifactId>CommandeMicroService</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>CommandeMicroService</name>
-	<description>CommandeMicroService</description>
+	<name>User_MicroService</name>
+	<description>User_MicroService</description>
 	<url/>
 	<licenses>
 		<license/>

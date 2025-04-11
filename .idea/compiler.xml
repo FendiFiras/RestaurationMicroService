@@ -19,7 +19,7 @@
         <module name="AvisMicroService" />
         <module name="ReservationMicroservice" />
       </profile>
-      <profile name="Annotation profile for CommandeMicroService" enabled="true">
+      <profile name="Annotation profile for CommandeMicroService (2)" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
