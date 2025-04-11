@@ -89,4 +89,4 @@ Fournir des avatars ou préférences utilisateur
 
 
 ✍️ Auteur
-Projet développé par Khalil CHKILI dans le cadre d’un microservice de gestion User.
+Projet développé par Khalil CHKILI dans le cadre d’un projet microservices de gestion d’utilisateurs pour une application de restauration.
