@@ -14,4 +14,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     User findByEmail(String email); // Méthode personnalisée pour trouver un utilisateur par email
     List<User> findByRole(Role role);
     long countByGender(Gender gender);
+    List<User> findAllByOrderByDateOfBirthAsc();
+
+    List<User> findAllByOrderByDateOfBirthDesc();
 }

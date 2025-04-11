@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>org.esprit</groupId>
-	<artifactId>CommandeMicroService</artifactId>
+	<artifactId>User_MicroService</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>User_MicroService</name>
 	<description>User_MicroService</description>

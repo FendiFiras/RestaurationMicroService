@@ -2,6 +2,7 @@ package org.esprit.user_microservice.Controllers;
 
 import lombok.AllArgsConstructor;
 import org.esprit.user_microservice.Entities.User;
+import org.esprit.user_microservice.Repository.UserRepository;
 import org.esprit.user_microservice.Services.IUserService;
 import org.esprit.user_microservice.Services.UserServiceImpl;
 import org.springframework.http.ResponseEntity;
@@ -17,9 +18,9 @@ import java.util.Map;
 @AllArgsConstructor
 public class UserController {
 
-    private IUserService userService;
-    private  UserServiceImpl userServiceImpl;
-
+    private final IUserService userService;
+    private  final UserServiceImpl userServiceImpl;
+    private final UserRepository userRepository;
     @PostMapping
     public User addUser(@RequestBody User user) {
         return userService.addUser(user);
@@ -58,4 +59,18 @@ public class UserController {
     public ResponseEntity<Map<String, Long>> getGenderStats() {
         return ResponseEntity.ok(userServiceImpl.getGenderStatistics());
     }
+    @GetMapping("/sorted/asc")
+    public List<User> getUsersSortedByDateOfBirthAsc() {
+        return userRepository.findAllByOrderByDateOfBirthAsc();
+    }
+
+    @GetMapping("/sorted/desc")
+    public List<User> getUsersSortedByDateOfBirthDesc() {
+        return userRepository.findAllByOrderByDateOfBirthDesc();
+    }
+    @GetMapping("/count")
+    public Long countUsers() {
+        return userRepository.count();
+    }
+
 }
