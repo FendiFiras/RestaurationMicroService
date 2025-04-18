@@ -6,6 +6,8 @@ import org.esprit.commandemicroservice.Entites.Commande;
 import org.esprit.commandemicroservice.Entites.ModePaiement;
 import org.esprit.commandemicroservice.Services.ICommandeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,8 +24,12 @@ import java.util.Map;
 @RestController
 @RequestMapping("/commande")
 @RequiredArgsConstructor
+@RefreshScope
+
 public class CommandeController {
     @Autowired
+
+
 
       ICommandeService commandeService;
 
@@ -95,5 +101,11 @@ public class CommandeController {
         return ResponseEntity.ok(commandes);
     }
 
+    @Value("${welcome.message:Default welcome message}")
+    private String welcomeMessage;
+    @GetMapping("/welcome")
+    public String welcome() {
+        return welcomeMessage;
+    }
 
 }
