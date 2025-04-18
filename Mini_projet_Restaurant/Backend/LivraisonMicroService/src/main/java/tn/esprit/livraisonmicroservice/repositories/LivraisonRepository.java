@@ -1,6 +1,6 @@
-package org.esprit.Livraisonmicroservice.repositories;
+package tn.esprit.livraisonmicroservice.repositories;
 
-import org.esprit.Livraisonmicroservice.entities.Livraison;
+import tn.esprit.livraisonmicroservice.entities.Livraison;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface LivraisonRepository extends JpaRepository<Livraison, Long> {

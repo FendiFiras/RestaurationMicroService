@@ -1,4 +1,4 @@
-package org.esprit.Livraisonmicroservice.entities;
+package tn.esprit.livraisonmicroservice.entities;
 
 import jakarta.persistence.*;
 import lombok.*;

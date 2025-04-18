@@ -1,10 +1,10 @@
-package org.esprit.Livraisonmicroservice;
+package tn.esprit.livraisonmicroservice;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class CommandeMicroServiceApplicationTests {
+class LivraisonMicroServiceApplicationTests {
 
 	@Test
 	void contextLoads() {

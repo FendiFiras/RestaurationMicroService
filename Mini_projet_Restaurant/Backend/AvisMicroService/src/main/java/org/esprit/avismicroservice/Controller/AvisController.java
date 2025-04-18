@@ -2,9 +2,11 @@ package org.esprit.avismicroservice.Controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import lombok.RequiredArgsConstructor;
 import org.esprit.avismicroservice.Entity.Avis;
 import org.esprit.avismicroservice.Service.AvisService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,6 +14,8 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/avis")
+@RequiredArgsConstructor
+@RefreshScope
 public class AvisController {
 
     @Autowired

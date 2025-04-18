@@ -1,7 +1,7 @@
-package org.esprit.Livraisonmicroservice.controllers;
+package tn.esprit.livraisonmicroservice.controllers;
 
-import org.esprit.Livraisonmicroservice.entities.Livraison;
-import org.esprit.Livraisonmicroservice.services.ILivraisonService;
+import tn.esprit.livraisonmicroservice.entities.Livraison;
+import tn.esprit.livraisonmicroservice.services.ILivraisonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
