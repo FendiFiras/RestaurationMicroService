@@ -2,38 +2,23 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <annotationProcessing>
-      <profile default="true" name="Default" enabled="true" />
-      <profile name="Maven default annotation processors profile" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <module name="User_MicroService" />
-        <module name="CommandeMicroService" />
-        <module name="ReservationMicroservice" />
-        <module name="Gateway" />
-        <module name="eureka" />
-      </profile>
-      <profile name="Annotation profile for User_MicroService" enabled="true">
       <profile name="Annotation profile for AvisMicroService" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="false">
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.30/lombok-1.18.30.jar" />
-        </processorPath>
-        <module name="CommandeMicroService" />
-      </profile>
-      <profile name="Annotation profile for User_MicroService" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="false">
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/unknown/lombok-unknown.jar" />
         </processorPath>
-        <module name="ReservationMicroservice" />
-        <module name="User_MicroService" />
+        <module name="AvisMicroService" />
       </profile>
-      <profile name="Annotation profile for ReservationMicroservice" enabled="true">
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="Gateway" />
+        <module name="eureka" />
+      </profile>
+      <profile name="Annotation profile for User_MicroService" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
@@ -41,31 +26,18 @@
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.30/lombok-1.18.30.jar" />
         </processorPath>
         <module name="ReservationMicroservice" />
-        <module name="AvisMicroService" />
+        <module name="User_MicroService" />
         <module name="CommandeMicroService" />
-        <module name="AvisMicroService" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-
-      <module name="CommandeMicroService (1)" target="17" />
-      <module name="CommandeMicroService (2)" target="17" />
-      <module name="LivraisonMicroService" target="17" />
-      <module name="MenuMicroservice" target="17" />
-    </bytecodeTargetLevel>
   </component>
+  <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="AvisMicroService" options="-parameters" />
       <module name="CommandeMicroService" options="-parameters" />
-      <module name="CommandeMicroService (1)" options="-parameters" />
-      <module name="CommandeMicroService (2)" options="-parameters" />
       <module name="Gateway" options="-parameters" />
       <module name="ReservationMicroservice" options="-parameters" />
       <module name="User_MicroService" options="-parameters" />
-      <module name="CommandeMicroService" options="" />
-      <module name="Gateway" options="" />
-      <module name="ReservationMicroservice" options="" />
-      <module name="User_MicroService" options="" />
       <module name="eureka" options="-parameters" />
     </option>
   </component>

@@ -1,10 +1,12 @@
 package org.esprit.user_microservice.Controllers;
 
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.esprit.user_microservice.Entities.User;
 import org.esprit.user_microservice.Repository.UserRepository;
 import org.esprit.user_microservice.Services.IUserService;
 import org.esprit.user_microservice.Services.UserServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,14 +15,14 @@ import java.util.Map;
 
 
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping("/users")
-@AllArgsConstructor
 public class UserController {
-
-    private final IUserService userService;
-    private  final UserServiceImpl userServiceImpl;
-    private final UserRepository userRepository;
+    @Autowired
+    private IUserService userService;
+    @Autowired
+    private   UserServiceImpl userServiceImpl;
+    @Autowired
+    private  UserRepository userRepository;
     @PostMapping
     public User addUser(@RequestBody User user) {
         return userService.addUser(user);
