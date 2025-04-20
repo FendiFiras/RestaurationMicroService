@@ -3,6 +3,7 @@ package org.esprit.reservationmicroservice.Controllers;
 import lombok.RequiredArgsConstructor;
 import org.esprit.reservationmicroservice.Entities.Reservation;
 import org.esprit.reservationmicroservice.Services.IReservationService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,10 +13,9 @@ import java.io.IOException;
 
 @RestController
 @RequestMapping("/reservation")
-@RequiredArgsConstructor
 public class ReservationController {
-
-    private final IReservationService reservationService;
+    @Autowired
+    private  IReservationService reservationService;
 
     // ➕ Ajouter une réservation
     @PostMapping("/add-reservation")

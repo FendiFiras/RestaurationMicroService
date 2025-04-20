@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/users")
 public class UserController {
@@ -23,7 +24,7 @@ public class UserController {
     private   UserServiceImpl userServiceImpl;
     @Autowired
     private  UserRepository userRepository;
-    @PostMapping
+    @PostMapping("/add")
     public User addUser(@RequestBody User user) {
         return userService.addUser(user);
     }
@@ -38,7 +39,7 @@ public class UserController {
         return userService.modifyUser(idUser, user);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public void deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
     }

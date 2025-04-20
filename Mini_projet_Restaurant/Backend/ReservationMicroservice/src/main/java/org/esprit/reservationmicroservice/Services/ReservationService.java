@@ -3,6 +3,7 @@
     import lombok.RequiredArgsConstructor;
     import org.esprit.reservationmicroservice.Entities.Reservation;
     import org.esprit.reservationmicroservice.Repository.ReservationRepository;
+    import org.springframework.beans.factory.annotation.Autowired;
     import org.springframework.stereotype.Service;
     import org.esprit.reservationmicroservice.Dto.User;  // Import du DTO User
 
@@ -13,13 +14,14 @@
     import java.util.List;
     import java.util.Optional;
 
-    @RequiredArgsConstructor
     @Service
     public class ReservationService implements IReservationService{
-
-        private final ReservationRepository reservationRepository;
-        private final UserClientFake userClientFake; // Injecté automatiquement
-        private final ExportService exportService;
+        @Autowired
+        private  ReservationRepository reservationRepository;
+        @Autowired
+        private  UserClientFake userClientFake; // Injecté automatiquement
+        @Autowired
+        private  ExportService exportService;
 
         public Reservation createReservation(Reservation reservation) {
             String userName = userClientFake.getNomUtilisateur(reservation.getUserId());
