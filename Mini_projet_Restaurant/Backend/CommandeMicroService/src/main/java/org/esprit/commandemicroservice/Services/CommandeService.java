@@ -1,9 +1,11 @@
 package org.esprit.commandemicroservice.Services;
 
+import org.esprit.commandemicroservice.Dto.User;
 import org.esprit.commandemicroservice.Entites.Commande;
 import org.esprit.commandemicroservice.Entites.ModePaiement;
 import org.esprit.commandemicroservice.Entites.TypeCommande;
 import org.esprit.commandemicroservice.Repository.CommandeRepo;
+import org.esprit.commandemicroservice.clients.UserClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,16 +20,21 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 
 public class CommandeService implements ICommandeService {
     @Autowired
 
-     CommandeRepo commandeRepository;
-    @Autowired
+    CommandeRepo commandeRepository;
 
-    UserClientFake userClientFake;
+
+    private static final Logger log = LoggerFactory.getLogger(CommandeService.class);
+
+    @Autowired
+    UserClient userClient;
     @Autowired
 
     PlatServiceFake platServiceFake;
@@ -93,7 +100,10 @@ public class CommandeService implements ICommandeService {
         Commande commande = commandeRepository.findById(idCommande)
                 .orElseThrow(() -> new RuntimeException("Commande introuvable"));
 
-        String nomClient = userClientFake.getNomUtilisateur(commande.getIdUser());
+        log.info("📡 Appel Feign - Récupération du nom utilisateur pour id: {}", commande.getIdUser());
+        User utilisateur = userClient.getUtilisateur(commande.getIdUser());
+        String nomClient = utilisateur.getNom(); // utilise la méthode getNom() de ton DTO
+        log.info("✅ Nom utilisateur récupéré: {}", nomClient);
         String nomLivreur = livraisonServiceFake.getNomLivreur(commande.getIdLivraison());
         List<String> nomsPlats = commande.getIdPlats().stream()
                 .map(platServiceFake::getNomPlat)
