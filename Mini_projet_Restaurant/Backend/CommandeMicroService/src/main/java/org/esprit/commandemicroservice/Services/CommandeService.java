@@ -9,6 +9,7 @@ import org.esprit.commandemicroservice.clients.UserClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.util.Date;
 import java.util.List;
 import com.itextpdf.text.*;
@@ -30,6 +31,8 @@ public class CommandeService implements ICommandeService {
 
     CommandeRepo commandeRepository;
 
+    @Autowired
+    CommandeMailService commandeMailService;
 
     private static final Logger log = LoggerFactory.getLogger(CommandeService.class);
 
@@ -44,16 +47,13 @@ public class CommandeService implements ICommandeService {
 
     @Override
     public Commande saveCommande(Commande commande) {
-        // Générer la date et le numéro de commande
         commande.setDateCommande(new Date());
         commande.setNumeroCommande("CMD-" + System.currentTimeMillis());
 
-        // Si c'est une commande à emporter, on supprime l'id de livraison
         if (commande.getTypeCommande() == TypeCommande.A_EMPORTER) {
             commande.setIdLivraison(null);
         }
 
-        // ✅ Calcul automatique du total selon les plats
         double total = 0.0;
         if (commande.getIdPlats() != null) {
             for (Long idPlat : commande.getIdPlats()) {
@@ -62,9 +62,27 @@ public class CommandeService implements ICommandeService {
         }
         commande.setTotal(total);
 
-        return commandeRepository.save(commande);
-    }
+        Commande saved = commandeRepository.save(commande);
 
+        try {
+            // ✅ Génération PDF
+            String filePath = generateCommandePdf(saved.getIdCommande());
+
+            // ✅ Récupérer infos utilisateur
+            User utilisateur = userClient.getUtilisateur(saved.getIdUser());
+            String toEmail = utilisateur.getEmail(); // <- Assure-toi que ce champ existe
+            String nomClient = utilisateur.getNom();
+
+            // ✅ Envoi de mail
+            File pdf = new File(filePath);
+            commandeMailService.sendFactureCommande(toEmail, nomClient, pdf, saved.getNumeroCommande());
+
+        } catch (Exception e) {
+            log.error("❌ Erreur lors de l'envoi du mail de facture ", e);
+        }
+
+        return saved;
+    }
 
     @Override
     public List<Commande> getAllCommandes() {
