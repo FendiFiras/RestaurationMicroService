@@ -1,10 +1,12 @@
 package org.esprit.commandemicroservice.Services;
 
+import org.esprit.commandemicroservice.Dto.Livraison;
 import org.esprit.commandemicroservice.Dto.User;
 import org.esprit.commandemicroservice.Entites.Commande;
 import org.esprit.commandemicroservice.Entites.ModePaiement;
 import org.esprit.commandemicroservice.Entites.TypeCommande;
 import org.esprit.commandemicroservice.Repository.CommandeRepo;
+import org.esprit.commandemicroservice.clients.LivClient;
 import org.esprit.commandemicroservice.clients.UserClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,8 +44,8 @@ public class CommandeService implements ICommandeService {
 
     PlatServiceFake platServiceFake;
     @Autowired
+    LivClient livraisonClient;
 
-    LivraisonServiceFake livraisonServiceFake;
 
     @Override
     public Commande saveCommande(Commande commande) {
@@ -122,7 +124,9 @@ public class CommandeService implements ICommandeService {
         User utilisateur = userClient.getUtilisateur(commande.getIdUser());
         String nomClient = utilisateur.getNom(); // utilise la méthode getNom() de ton DTO
         log.info("✅ Nom utilisateur récupéré: {}", nomClient);
-        String nomLivreur = livraisonServiceFake.getNomLivreur(commande.getIdLivraison());
+        Livraison livraison = livraisonClient.getLivraisonById(commande.getIdLivraison());
+        String nomLivreur = livraison.getDeliveryAgent(); // 👈 tu continues d’extraire le champ
+
         List<String> nomsPlats = commande.getIdPlats().stream()
                 .map(platServiceFake::getNomPlat)
                 .toList();
