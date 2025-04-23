@@ -12,17 +12,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.*;
 import java.io.FileOutputStream;
 
-import java.util.Map;
 import java.util.List;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,6 +62,16 @@ public class CommandeService implements ICommandeService {
         commande.setTotal(total);
 
         Commande saved = commandeRepository.save(commande);
+        if (commande.getTypeCommande() == TypeCommande.LIVRAISON) {
+            Long idLivraison = assignerLivraisonDisponible();
+            if (idLivraison != null) {
+                saved.setIdLivraison(idLivraison);
+                commandeRepository.save(saved); // mise à jour
+            } else {
+                log.warn("Aucune livraison disponible à affecter.");
+            }
+        }
+
 
         try {
             // ✅ Génération PDF
@@ -280,6 +287,24 @@ public class CommandeService implements ICommandeService {
 
         return commandes;
     }
+
+
+    private Long assignerLivraisonDisponible() {
+        List<Livraison> livraisons = livraisonClient.getAllLivraisons();
+
+        // Ici on choisit la première, ou on peut filtrer celles qui n'ont pas encore été affectées
+        if (livraisons != null && !livraisons.isEmpty()) {
+            Random random = new Random();
+            Livraison livraisonChoisie = livraisons.get(random.nextInt(livraisons.size()));
+
+            log.info("🚚 Livraison disponible assignée automatiquement : {}", livraisonChoisie.getId());
+            return livraisonChoisie.getId();
+        }
+
+        log.warn("⚠️ Aucune livraison disponible !");
+        return null; // ou lève une exception si aucune livraison trouvée
+    }
+
 
 }
 
