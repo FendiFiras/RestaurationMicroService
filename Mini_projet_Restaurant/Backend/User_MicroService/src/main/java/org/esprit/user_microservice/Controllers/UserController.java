@@ -7,11 +7,13 @@ import org.esprit.user_microservice.Repository.UserRepository;
 import org.esprit.user_microservice.Services.IUserService;
 import org.esprit.user_microservice.Services.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 
 @CrossOrigin(origins = "http://localhost:4200")
@@ -75,5 +77,18 @@ public class UserController {
     public Long countUsers() {
         return userRepository.count();
     }
+
+
+    @GetMapping("/users/{id}")
+    public ResponseEntity<User> getUserById(@PathVariable Long id) {
+        Optional<User> user = userRepository.findById(id);
+
+        if (user.isPresent()) {
+            return ResponseEntity.ok(user.get()); // ✅ 200 with body
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build(); // ✅ 404 if not found
+        }
+    }
+
 
 }

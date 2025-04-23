@@ -7,6 +7,8 @@ import org.esprit.avismicroservice.Entity.Avis;
 import org.esprit.avismicroservice.Service.AvisService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -32,8 +34,13 @@ public class AvisController {
     }
 
     @PostMapping("/create")
-    public Avis createAvis(@RequestBody Avis avis) {
-        return avisService.createAvis(avis);
+    public ResponseEntity<?> ajouterAvis(@RequestBody Avis avis) {
+        try {
+            Avis savedAvis = avisService.createAvis(avis);
+            return ResponseEntity.ok(savedAvis);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 
     @PutMapping("/update/{id}")

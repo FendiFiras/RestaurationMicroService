@@ -8,14 +8,12 @@ import org.esprit.commandemicroservice.Services.ICommandeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
 import java.io.*;
@@ -33,10 +31,16 @@ public class CommandeController {
 
       ICommandeService commandeService;
 
-    @PostMapping("addCommande")
-    public Commande createCommande(@RequestBody Commande commande) {
-        return commandeService.saveCommande(commande);
+    @PostMapping("/addCommande")
+    public ResponseEntity<?> createCommande(@RequestBody Commande commande) {
+        try {
+            Commande savedCommande = commandeService.saveCommande(commande);
+            return ResponseEntity.ok(savedCommande);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
+
 
     @GetMapping("Gett_All_Commandes")
     public List<Commande> getAllCommandes() {

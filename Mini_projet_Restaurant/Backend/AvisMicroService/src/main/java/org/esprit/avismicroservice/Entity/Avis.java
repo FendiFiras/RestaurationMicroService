@@ -25,7 +25,11 @@ public class Avis {
     private String commentaire;
 
 
-    private Long IdUser;
+    private Long idUser;
+
+    public Long getIdUser() {
+        return idUser;
+    }
 
 
     public int getNote() {

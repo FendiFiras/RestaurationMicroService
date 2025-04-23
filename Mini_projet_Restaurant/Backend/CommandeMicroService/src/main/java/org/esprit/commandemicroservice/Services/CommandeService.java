@@ -1,5 +1,6 @@
 package org.esprit.commandemicroservice.Services;
 
+import feign.FeignException;
 import org.esprit.commandemicroservice.Dto.Livraison;
 import org.esprit.commandemicroservice.Dto.User;
 import org.esprit.commandemicroservice.Entites.Commande;
@@ -9,6 +10,7 @@ import org.esprit.commandemicroservice.Repository.CommandeRepo;
 import org.esprit.commandemicroservice.clients.LivClient;
 import org.esprit.commandemicroservice.clients.UserClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -46,6 +48,8 @@ public class CommandeService implements ICommandeService {
 
     @Override
     public Commande saveCommande(Commande commande) {
+        validateUserExists(commande.getIdUser());
+
         commande.setDateCommande(new Date());
         commande.setNumeroCommande("CMD-" + System.currentTimeMillis());
 
@@ -92,7 +96,17 @@ public class CommandeService implements ICommandeService {
 
         return saved;
     }
-
+    private void validateUserExists(Long idUser) {
+        try {
+            userClient.CheckUtilisateur(idUser);
+        } catch (FeignException e) {
+            System.out.println("❌ Feign error status: " + e.status());
+            if (e.status() == HttpStatus.NOT_FOUND.value()) {
+                throw new RuntimeException("User doesn't exist");
+            }
+            throw new RuntimeException("User service error: " + e.getMessage());
+        }
+    }
     @Override
     public List<Commande> getAllCommandes() {
         return commandeRepository.findAll();
@@ -258,35 +272,51 @@ public class CommandeService implements ICommandeService {
         List<Commande> commandes = new ArrayList<>();
 
         for (Map<String, Object> participant : participants) {
-            Long idUser = Long.valueOf(participant.get("idUser").toString());
-            List<Integer> idPlatsRaw = (List<Integer>) participant.get("idPlats");
-            Long idLivraison = Long.valueOf(participant.get("idLivraison").toString());
+            try {
+                Long idUser = Long.parseLong(participant.get("idUser").toString());
+                List<?> idPlatsRaw = (List<?>) participant.get("idPlats");
+                List<Long> idPlats = idPlatsRaw.stream()
+                        .map(Object::toString)
+                        .map(Long::parseLong)
+                        .toList();
 
-            List<Long> idPlats = idPlatsRaw.stream()
-                    .map(Long::valueOf)
-                    .toList();
+                Long idLivraison = participant.get("idLivraison") != null
+                        ? Long.parseLong(participant.get("idLivraison").toString())
+                        : assignerLivraisonDisponible(); // Optionnel
 
-            double total = idPlats.stream()
-                    .mapToDouble(id -> platServiceFake.getPrixPlat(id))
-                    .sum();
+                double total = idPlats.stream()
+                        .mapToDouble(platServiceFake::getPrixPlat)
+                        .sum();
 
-            Commande commande = new Commande();
-            commande.setIdUser(idUser);
-            commande.setIdPlats(idPlats);
-            commande.setIdLivraison(idLivraison);
+                Commande commande = new Commande();
+                commande.setIdUser(idUser);
+                commande.setIdPlats(idPlats);
+                commande.setIdLivraison(idLivraison);
+                commande.setTotal(total);
+                commande.setDateCommande(new Date());
+                commande.setStatut("EN_ATTENTE_VALIDATION");
+                commande.setNumeroCommande("CMD-" + System.currentTimeMillis());
+                commande.setModePaiement(ModePaiement.CARTE);
+                commande.setTypeCommande(TypeCommande.LIVRAISON);
 
-            commande.setTotal(total);
-            commande.setDateCommande(new Date());
-            commande.setStatut("EN_ATTENTE_VALIDATION");
-            commande.setNumeroCommande("CMD-" + System.currentTimeMillis());
-            commande.setModePaiement(ModePaiement.CARTE); // ou autre par défaut
-            commande.setTypeCommande(TypeCommande.LIVRAISON); // ou autre
+                Commande saved = commandeRepository.save(commande);
 
-            commandes.add(commandeRepository.save(commande));
+                // 📤 Envoi d’un email confirmation (optionnel)
+                User utilisateur = userClient.getUtilisateur(idUser);
+                String toEmail = utilisateur.getEmail();
+                commandeMailService.sendConfirmationCommande(toEmail, saved.getNumeroCommande());
+
+                commandes.add(saved);
+
+            } catch (Exception e) {
+                log.error("❌ Erreur pour un participant : {}", participant, e);
+                // Tu peux aussi stocker l’erreur ou la retourner en réponse
+            }
         }
 
         return commandes;
     }
+
 
 
     private Long assignerLivraisonDisponible() {

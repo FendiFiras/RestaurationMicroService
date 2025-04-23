@@ -54,4 +54,30 @@ public class CommandeMailService {
             throw new RuntimeException("Échec de l'envoi de la facture par email", e);
         }
     }
+
+    public void sendConfirmationCommande(String toEmail, String numeroCommande) {
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true);
+
+            helper.setTo(toEmail);
+            helper.setSubject("Confirmation de votre commande");
+
+            String content = "<p>Bonjour,</p>"
+                    + "<p>Votre commande <strong>" + numeroCommande + "</strong> a été bien enregistrée.</p>"
+                    + "<p>Vous recevrez une notification dès qu'elle sera en cours de livraison.</p>"
+                    + "<br>"
+                    + "<p>Cordialement,</p>"
+                    + "<p><strong>Service Commande - CodingFactory</strong></p>";
+
+            helper.setText(content, true);
+
+            mailSender.send(message);
+            log.info("✅ Email de confirmation envoyé à {}", toEmail);
+
+        } catch (Exception e) {
+            log.error("❌ Erreur lors de l'envoi de l'email de confirmation à {} : {}", toEmail, e.getMessage());
+        }
+    }
+
 }
