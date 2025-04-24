@@ -1,52 +1,62 @@
 package org.esprit.commandemicroservice.Services;
 
+import feign.FeignException;
+import org.esprit.commandemicroservice.Dto.Livraison;
+import org.esprit.commandemicroservice.Dto.User;
 import org.esprit.commandemicroservice.Entites.Commande;
 import org.esprit.commandemicroservice.Entites.ModePaiement;
 import org.esprit.commandemicroservice.Entites.TypeCommande;
 import org.esprit.commandemicroservice.Repository.CommandeRepo;
+import org.esprit.commandemicroservice.clients.LivClient;
+import org.esprit.commandemicroservice.clients.UserClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.List;
+import java.io.File;
+import java.util.*;
+
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.*;
 import java.io.FileOutputStream;
 
-import java.util.Map;
 import java.util.List;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 
 public class CommandeService implements ICommandeService {
     @Autowired
 
-     CommandeRepo commandeRepository;
-    @Autowired
+    CommandeRepo commandeRepository;
 
-    UserClientFake userClientFake;
+    @Autowired
+    CommandeMailService commandeMailService;
+
+    private static final Logger log = LoggerFactory.getLogger(CommandeService.class);
+
+    @Autowired
+    UserClient userClient;
     @Autowired
 
     PlatServiceFake platServiceFake;
     @Autowired
+    LivClient livraisonClient;
 
-    LivraisonServiceFake livraisonServiceFake;
 
     @Override
     public Commande saveCommande(Commande commande) {
-        // Générer la date et le numéro de commande
+        validateUserExists(commande.getIdUser());
+
         commande.setDateCommande(new Date());
         commande.setNumeroCommande("CMD-" + System.currentTimeMillis());
 
-        // Si c'est une commande à emporter, on supprime l'id de livraison
         if (commande.getTypeCommande() == TypeCommande.A_EMPORTER) {
             commande.setIdLivraison(null);
         }
 
-        // ✅ Calcul automatique du total selon les plats
         double total = 0.0;
         if (commande.getIdPlats() != null) {
             for (Long idPlat : commande.getIdPlats()) {
@@ -55,10 +65,48 @@ public class CommandeService implements ICommandeService {
         }
         commande.setTotal(total);
 
-        return commandeRepository.save(commande);
+        Commande saved = commandeRepository.save(commande);
+        if (commande.getTypeCommande() == TypeCommande.LIVRAISON) {
+            Long idLivraison = assignerLivraisonDisponible();
+            if (idLivraison != null) {
+                saved.setIdLivraison(idLivraison);
+                commandeRepository.save(saved); // mise à jour
+            } else {
+                log.warn("Aucune livraison disponible à affecter.");
+            }
+        }
+
+
+        try {
+            // ✅ Génération PDF
+            String filePath = generateCommandePdf(saved.getIdCommande());
+
+            // ✅ Récupérer infos utilisateur
+            User utilisateur = userClient.getUtilisateur(saved.getIdUser());
+            String toEmail = utilisateur.getEmail(); // <- Assure-toi que ce champ existe
+            String nomClient = utilisateur.getNom();
+
+            // ✅ Envoi de mail
+            File pdf = new File(filePath);
+            commandeMailService.sendFactureCommande(toEmail, nomClient, pdf, saved.getNumeroCommande());
+
+        } catch (Exception e) {
+            log.error("❌ Erreur lors de l'envoi du mail de facture ", e);
+        }
+
+        return saved;
     }
-
-
+    private void validateUserExists(Long idUser) {
+        try {
+            userClient.CheckUtilisateur(idUser);
+        } catch (FeignException e) {
+            System.out.println("❌ Feign error status: " + e.status());
+            if (e.status() == HttpStatus.NOT_FOUND.value()) {
+                throw new RuntimeException("User doesn't exist");
+            }
+            throw new RuntimeException("User service error: " + e.getMessage());
+        }
+    }
     @Override
     public List<Commande> getAllCommandes() {
         return commandeRepository.findAll();
@@ -93,8 +141,13 @@ public class CommandeService implements ICommandeService {
         Commande commande = commandeRepository.findById(idCommande)
                 .orElseThrow(() -> new RuntimeException("Commande introuvable"));
 
-        String nomClient = userClientFake.getNomUtilisateur(commande.getIdUser());
-        String nomLivreur = livraisonServiceFake.getNomLivreur(commande.getIdLivraison());
+        log.info("📡 Appel Feign - Récupération du nom utilisateur pour id: {}", commande.getIdUser());
+        User utilisateur = userClient.getUtilisateur(commande.getIdUser());
+        String nomClient = utilisateur.getNom(); // utilise la méthode getNom() de ton DTO
+        log.info("✅ Nom utilisateur récupéré: {}", nomClient);
+        Livraison livraison = livraisonClient.getLivraisonById(commande.getIdLivraison());
+        String nomLivreur = livraison.getDeliveryAgent(); // 👈 tu continues d’extraire le champ
+
         List<String> nomsPlats = commande.getIdPlats().stream()
                 .map(platServiceFake::getNomPlat)
                 .toList();
@@ -219,35 +272,69 @@ public class CommandeService implements ICommandeService {
         List<Commande> commandes = new ArrayList<>();
 
         for (Map<String, Object> participant : participants) {
-            Long idUser = Long.valueOf(participant.get("idUser").toString());
-            List<Integer> idPlatsRaw = (List<Integer>) participant.get("idPlats");
-            Long idLivraison = Long.valueOf(participant.get("idLivraison").toString());
+            try {
+                Long idUser = Long.parseLong(participant.get("idUser").toString());
+                List<?> idPlatsRaw = (List<?>) participant.get("idPlats");
+                List<Long> idPlats = idPlatsRaw.stream()
+                        .map(Object::toString)
+                        .map(Long::parseLong)
+                        .toList();
 
-            List<Long> idPlats = idPlatsRaw.stream()
-                    .map(Long::valueOf)
-                    .toList();
+                Long idLivraison = participant.get("idLivraison") != null
+                        ? Long.parseLong(participant.get("idLivraison").toString())
+                        : assignerLivraisonDisponible(); // Optionnel
 
-            double total = idPlats.stream()
-                    .mapToDouble(id -> platServiceFake.getPrixPlat(id))
-                    .sum();
+                double total = idPlats.stream()
+                        .mapToDouble(platServiceFake::getPrixPlat)
+                        .sum();
 
-            Commande commande = new Commande();
-            commande.setIdUser(idUser);
-            commande.setIdPlats(idPlats);
-            commande.setIdLivraison(idLivraison);
+                Commande commande = new Commande();
+                commande.setIdUser(idUser);
+                commande.setIdPlats(idPlats);
+                commande.setIdLivraison(idLivraison);
+                commande.setTotal(total);
+                commande.setDateCommande(new Date());
+                commande.setStatut("EN_ATTENTE_VALIDATION");
+                commande.setNumeroCommande("CMD-" + System.currentTimeMillis());
+                commande.setModePaiement(ModePaiement.CARTE);
+                commande.setTypeCommande(TypeCommande.LIVRAISON);
 
-            commande.setTotal(total);
-            commande.setDateCommande(new Date());
-            commande.setStatut("EN_ATTENTE_VALIDATION");
-            commande.setNumeroCommande("CMD-" + System.currentTimeMillis());
-            commande.setModePaiement(ModePaiement.CARTE); // ou autre par défaut
-            commande.setTypeCommande(TypeCommande.LIVRAISON); // ou autre
+                Commande saved = commandeRepository.save(commande);
 
-            commandes.add(commandeRepository.save(commande));
+                // 📤 Envoi d’un email confirmation (optionnel)
+                User utilisateur = userClient.getUtilisateur(idUser);
+                String toEmail = utilisateur.getEmail();
+                commandeMailService.sendConfirmationCommande(toEmail, saved.getNumeroCommande());
+
+                commandes.add(saved);
+
+            } catch (Exception e) {
+                log.error("❌ Erreur pour un participant : {}", participant, e);
+                // Tu peux aussi stocker l’erreur ou la retourner en réponse
+            }
         }
 
         return commandes;
     }
+
+
+
+    private Long assignerLivraisonDisponible() {
+        List<Livraison> livraisons = livraisonClient.getAllLivraisons();
+
+        // Ici on choisit la première, ou on peut filtrer celles qui n'ont pas encore été affectées
+        if (livraisons != null && !livraisons.isEmpty()) {
+            Random random = new Random();
+            Livraison livraisonChoisie = livraisons.get(random.nextInt(livraisons.size()));
+
+            log.info("🚚 Livraison disponible assignée automatiquement : {}", livraisonChoisie.getId());
+            return livraisonChoisie.getId();
+        }
+
+        log.warn("⚠️ Aucune livraison disponible !");
+        return null; // ou lève une exception si aucune livraison trouvée
+    }
+
 
 }
 

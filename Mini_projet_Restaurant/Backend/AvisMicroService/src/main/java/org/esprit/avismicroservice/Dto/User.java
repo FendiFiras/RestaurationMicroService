@@ -1,22 +1,13 @@
 package org.esprit.avismicroservice.Dto;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 
-@Entity
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@Data
 public class User {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idUser;
 
     private String firstName;

@@ -7,6 +7,7 @@ public class User {
     private Long idUser;
     private String firstName;
     private String lastName;
+    private String email;
 
     public String getNom() {
         return firstName + " " + lastName;

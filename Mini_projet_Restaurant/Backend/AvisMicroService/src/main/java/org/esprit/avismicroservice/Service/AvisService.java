@@ -1,8 +1,12 @@
 package org.esprit.avismicroservice.Service;
 
+import feign.FeignException;
+import org.esprit.avismicroservice.Client.UserClient;
+import org.esprit.avismicroservice.Dto.User;
 import org.esprit.avismicroservice.Entity.Avis;
 import org.esprit.avismicroservice.Repository.AvisRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,6 +16,9 @@ import java.util.Optional;
 public class AvisService {
     @Autowired
     private AvisRepository avisRepository;
+    @Autowired
+    private UserClient userClient;
+
 
     public List<Avis> getAllAvis() {
         return avisRepository.findAll();
@@ -22,9 +29,24 @@ public class AvisService {
     }
 
     public Avis createAvis(Avis avis) {
+        // 🔍 Vérifier l'existence de l'utilisateur AVANT de créer un avis
+        validateUserExists(avis.getIdUser());
+
+        // ✅ Enregistrer l'avis si l'utilisateur existe
         return avisRepository.save(avis);
     }
 
+    private void validateUserExists(Long idUser) {
+        try {
+            userClient.getUtilisateur(idUser);
+        } catch (FeignException e) {
+            System.out.println("❌ Feign error status: " + e.status());
+            if (e.status() == HttpStatus.NOT_FOUND.value()) {
+                throw new RuntimeException("User doesn't exist");
+            }
+            throw new RuntimeException("User service error: " + e.getMessage());
+        }
+    }
     public Avis updateAvis(Long id, Avis updatedAvis) {
         return avisRepository.findById(id).map(avis -> {
             avis.setNote(updatedAvis.getNote());
