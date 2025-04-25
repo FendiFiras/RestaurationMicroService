@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Silent Check SSO</title>
+</head>
+<body>
+  <script type="text/javascript">
+    // Keycloak script to check the session silently
+    if (window.opener) {
+      window.opener.postMessage({ type: 'check-sso', status: 'success' }, window.location.origin);
+    }
+    window.close();
+  </script>
+</body>
+</html>

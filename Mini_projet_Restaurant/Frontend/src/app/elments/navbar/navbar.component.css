@@ -1,0 +1,121 @@
+/* Barre de navigation */
+.navbar {
+  background-color: #1a1a1a;
+  padding: 1rem 0;
+  position: fixed;
+  width: 100%;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* Conteneur central */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 2rem;
+}
+
+/* Logo */
+.logo {
+  color: #ffffff;
+  font-size: 1.8rem;
+  font-weight: 700;
+  text-decoration: none;
+  letter-spacing: 1px;
+}
+
+.logo span {
+  color: #c10a28;
+}
+
+/* Liens de navigation */
+.nav-links {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+  transition: all 0.3s ease-in-out; /* Added smooth transition */
+}
+
+.nav-item {
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+  position: relative;
+}
+
+.nav-item:hover {
+  color: #c10a28;
+}
+
+/* Infos utilisateur */
+.user-info {
+  font-weight: bold;
+  margin-left: 1rem;
+  color: #f0f0f0;
+}
+
+/* Bouton déconnexion */
+.logout {
+  cursor: pointer;
+  color: #ff4d4d;
+  margin-left: 1rem;
+  transition: color 0.3s ease;
+}
+
+.logout:hover {
+  color: #ff1a1a;
+}
+
+/* Bouton connexion */
+.login {
+  cursor: pointer;
+  color: #00ccff;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.login:hover {
+  color: #0099cc;
+}
+
+/* Menu hamburger */
+.hamburger {
+  display: none;
+  color: white;
+  font-size: 1.8rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .nav-links {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: #1a1a1a;
+    padding: 1rem 2rem;
+    text-align: center;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3); /* Added box shadow for better visibility */
+    transition: transform 0.3s ease-in-out; /* Added transition for smooth opening */
+  }
+
+  .nav-links.active {
+    display: flex;
+    transform: translateY(0); /* Added animation for menu opening */
+  }
+
+  .hamburger {
+    display: block;
+  }
+}
+

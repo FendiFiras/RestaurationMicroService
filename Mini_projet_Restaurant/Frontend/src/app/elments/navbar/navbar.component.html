@@ -1,0 +1,34 @@
+<nav class="navbar">
+  <div class="container">
+    <a class="logo" routerLink="/">Chez<span>Monta</span></a>
+
+    <div class="nav-links" [class.active]="isMenuOpen">
+      <a routerLink="/menu" class="nav-item">Menu</a>
+      <a routerLink="/about" class="nav-item">À propos</a>
+      <a routerLink="/reservation" class="nav-item">Réservations</a>
+      <a routerLink="/user" class="nav-item">Users</a>
+      <a routerLink="/contact" class="nav-item">Contact</a>
+
+      <ng-container *ngIf="!isLoading">
+        <ng-container *ngIf="isLoggedIn; else loginTemplate">
+          <span class="nav-item user-info">
+            Bienvenue, {{ username }}
+          </span>
+          <a (click)="logout()" class="nav-item logout" aria-label="Déconnexion">
+            Déconnexion
+          </a>
+        </ng-container>
+      </ng-container>
+
+      <ng-template #loginTemplate>
+        <a (click)="login()" class="nav-item login" [class.disabled]="isLoading" aria-label="Connexion">
+          Connexion
+        </a>
+      </ng-template>
+    </div>
+
+    <div class="hamburger" (click)="toggleMenu()" aria-label="Toggle menu">
+      <span>☰</span>
+    </div>
+  </div>
+</nav>
