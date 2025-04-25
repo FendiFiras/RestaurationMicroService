@@ -1,5 +1,53 @@
 version: '3.8'
 services:
+  configserver:
+    container_name: configserver
+    build:
+      context: ./Mini_projet_Restaurant/Backend/configserver
+    ports:
+      - "8888:8888"
+
+  eureka:
+    container_name: eureka
+    build:
+      context: ./Mini_projet_Restaurant/Backend/eureka
+    ports:
+      - "8761:8761"
+
+  user-microservice:
+    container_name: user-microservice
+    build:
+      context: ./Mini_projet_Restaurant/Backend/User_MicroService
+    ports:
+      - "8087:8087"
+
+  avis-microservice:
+    container_name: avis-microservice
+    build:
+      context: ./Mini_projet_Restaurant/Backend/AvisMicroService
+    ports:
+      - "8082:8082"
+
+  reservation-microservice:
+    container_name: reservation-microservice
+    build:
+      context: ./Mini_projet_Restaurant/Backend/ReservationMicroMicroService
+    ports:
+      - "8086:8086"
+
+  commande-microservice:
+    container_name: commande-microservice
+    build:
+      context: ./Mini_projet_Restaurant/Backend/CommandeMicroService
+    ports:
+      - "8081:8081"
+
+  livraison-microservice:
+    container_name: livraison-microservice
+    build:
+      context: ./Mini_projet_Restaurant/Backend/LivraisonMicroService
+    ports:
+      - "8083:8083"
   keycloak-mysql:
     container_name: keycloak-mysql
     image: mysql:8
