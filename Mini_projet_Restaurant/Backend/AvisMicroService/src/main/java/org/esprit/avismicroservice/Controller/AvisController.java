@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -42,7 +43,10 @@ public class AvisController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
-
+    @GetMapping("/statistics")
+    public Map<String, Object> getAvisStatistics() {
+        return avisService.getAvisStatistics();
+    }
     @PutMapping("/update/{id}")
     public Avis updateAvis(@PathVariable Long id, @RequestBody Avis avis) {
         return avisService.updateAvis(id, avis);

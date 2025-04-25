@@ -1,7 +1,5 @@
 version: '3.8'
-
 services:
-
   keycloak-mysql:
     container_name: keycloak-mysql
     image: mysql:8
@@ -12,14 +10,13 @@ services:
       MYSQL_DATABASE: keycloak
       MYSQL_USER: keycloak
       MYSQL_PASSWORD: password
-
   keycloak:
     container_name: keycloak
     image: quay.io/keycloak/keycloak:24.0.1
     command: [ "start-dev", "--import-realm" ]
     environment:
       DB_VENDOR: MYSQL
-      DB_ADDR: keycloak-mysql
+      DB_ADDR: mysql
       DB_DATABASE: keycloak
       DB_USER: keycloak
       DB_PASSWORD: password
@@ -31,79 +28,3 @@ services:
       - ./docker/keycloak/realms/:/opt/keycloak/data/import/
     depends_on:
       - keycloak-mysql
-
-  configserver:
-    build: ./RestaurationMicroService/RestaurationMicroService/Mini_projet_Restaurant/Backend/configserver
-    ports:
-      - "8888:8888"
-    environment:
-      - SPRING_PROFILES_ACTIVE=docker
-
-  eureka:
-    build: ./RestaurationMicroService/RestaurationMicroService/Mini_projet_Restaurant/Backend/eureka
-    ports:
-      - "8761:8761"
-    depends_on:
-      - configserver
-    environment:
-      - SPRING_PROFILES_ACTIVE=docker
-
-  gateway:
-    build: ./RestaurationMicroService/RestaurationMicroService/Mini_projet_Restaurant/Backend/Gateway
-    ports:
-      - "8093:8093"
-    depends_on:
-      - configserver
-      - eureka
-    environment:
-      - SPRING_PROFILES_ACTIVE=docker
-
-  user-service:
-    build: ./RestaurationMicroService/RestaurationMicroService/Mini_projet_Restaurant/Backend/User_MicroService
-    ports:
-      - "8087:8087"
-    depends_on:
-      - configserver
-      - eureka
-    environment:
-      - SPRING_PROFILES_ACTIVE=docker
-
-  avis-service:
-    build: ./RestaurationMicroService/RestaurationMicroService/Mini_projet_Restaurant/Backend/AvisMicroService
-    ports:
-      - "8082:8082"
-    depends_on:
-      - configserver
-      - eureka
-    environment:
-      - SPRING_PROFILES_ACTIVE=docker
-
-  commande-service:
-    build: ./RestaurationMicroService/RestaurationMicroService/Mini_projet_Restaurant/Backend/CommandeMicroService
-    ports:
-      - "8081:8081"
-    depends_on:
-      - configserver
-      - eureka
-    environment:
-      - SPRING_PROFILES_ACTIVE=docker
-
-  livraison-service:
-    build: ./RestaurationMicroService/RestaurationMicroService/Mini_projet_Restaurant/Backend/LivraisonMicroService
-    ports:
-      - "8083:8083"
-    depends_on:
-      - configserver
-      - eureka
-    environment:
-      - SPRING_PROFILES_ACTIVE=docker
-
-  reservation-service:
-    build: ./RestaurationMicroService/RestaurationMicroService/Mini_projet_Restaurant/Backend/ReservationMicroservice
-    ports:
-      - "8086:8086"
-    depends_on:
-      - configserver
-      - eureka
-    environment:
-      - SPRING_PROFILES_ACTIVE=docker
