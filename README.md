@@ -26,7 +26,6 @@ Le projet a pour but de :
 - Gérer la découverte de services avec **Eureka**.
 - Utiliser un **API Gateway** pour centraliser les appels clients.
 - Tester les routes via **Postman**.
--  **Keycloack**.
 
 ## 🛠️ Technologies Utilisées
 - **Java 17 / Spring Boot 3.4.3**
@@ -34,6 +33,8 @@ Le projet a pour but de :
 - **MySQL** pour la base de données
 - **Lombok** pour réduire le boilerplate
 - **Postman** pour les tests API
+-  **Keycloack**.
+
 
 ## 🔍 Fonctionnalités Clés
 - 🧠 Microservice de Recommandation Intelligente :
