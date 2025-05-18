@@ -150,6 +150,10 @@ Le **AvisMicroService** est responsable de la gestion des avis clients sur les c
 
 ## 📕 Objectif
 Le microservice **CommandeMicroService** permet de gérer les commandes passées dans l'application de restauration. Il est connecté à plusieurs autres services (utilisateur, plat, livraison) et offre des opérations avancées telles que le tri, le filtrage, la commande partagée ou la génération de PDF de facture.
+# 🍽️ MenuMicroService - Gestion des Menus et Plats
+
+## 📅 Objectif du Service
+Le **MenuMicroService** est responsable de la gestion des menus et des plats pour l'application de restauration. Il offre des opérations CRUD complètes pour les menus et les plats ainsi que des fonctionnalités avancées telles que la recherche ou un plat mystère aléatoire.
 
 ---
 
@@ -177,6 +181,40 @@ Le microservice **CommandeMicroService** permet de gérer les commandes passées
 | PUT     | `/reservation/mark-urgent/{id}` | Marquer une réservation comme urgente |
 | GET     | `/reservation/urgent` | Récupérer toutes les réservations urgentes |
 | GET     | `/reservation/export` | Exporter les réservations au format Excel |
+- MySQL
+- Postman pour le test
+
+---
+
+## 🔄 API - Menus
+| Méthode | Endpoint | Description |
+|---------|----------|-------------|
+| GET     | `/Menu/GetAllMenu` | Récupérer tous les menus |
+| GET     | `/Menu/GetMenu/{id}` | Récupérer un menu par ID |
+| POST    | `/Menu/AddNewMenu` | Créer un nouveau menu |
+| PUT     | `/Menu/UpdateMenu/{id}` | Modifier un menu existant |
+| DELETE  | `/Menu/DeleteMenu/{id}` | Supprimer un menu |
+
+---
+
+## 🍽️ API - Plats
+| Méthode | Endpoint | Description |
+|---------|----------|-------------|
+| GET     | `/Menu/plats/GetAllPlats` | Récupérer tous les plats |
+| GET     | `/Menu/plats/GetPlatBy/{id}` | Récupérer un plat par ID |
+| POST    | `/Menu/plats/AddNewPlat` | Ajouter un nouveau plat |
+| PUT     | `/Menu/plats/UpdatePlat/{id}` | Modifier un plat existant |
+| DELETE  | `/Menu/plats/DeletePlatBy/{id}` | Supprimer un plat |
+
+### 🔍 Recherche avancée
+| Méthode | Endpoint | Description |
+|---------|----------|-------------|
+| GET     | `/Menu/plats/search?nom=...&prixMax=...` | Recherche par nom et/ou prix maximum |
+
+### 🎩 Plat mystère
+| Méthode | Endpoint | Description |
+|---------|----------|-------------|
+| GET     | `/Menu/plats/Surprise Dish` | Retourne un plat mystère avec réduction aléatoire |
 
 ---
 
@@ -277,6 +315,21 @@ POST /commande/partagee/save
 ### 🔎 Filtrer par mode de paiement
 ```
 GET /commande/filter-by-mode?modePaiement=CARTE
+### Ajouter un plat
+```http
+POST /Menu/plats/AddNewPlat
+```
+```json
+{
+  "nom": "Pizza 4 Fromages",
+  "prix": 18.50,
+  "description": "Délicieuse pizza avec mozzarella, chèvre, bleu et parmesan"
+}
+```
+
+### Recherche de plat par nom
+```http
+GET /Menu/plats/search?nom=pizza
 ```
 
 ---
@@ -312,3 +365,8 @@ Ce microservice peut être appelé par :
 🔄 Préfixe API : `/commande`
 
 ✍️ Auteur Projet développé par Blel Montassar dans le cadre d’un projet microservices de gestion d’utilisateurs pour une application de restauration.
+📍 Port par défaut : `8085`
+
+
+✍️ Auteur
+Projet développé par Adem Zitouni dans le cadre d’un microservice de gestion de restauration
