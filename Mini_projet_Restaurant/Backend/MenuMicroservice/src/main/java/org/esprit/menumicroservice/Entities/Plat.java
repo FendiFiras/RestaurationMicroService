@@ -14,6 +14,7 @@ public class Plat {
     private Double prix;
 
     private String description;
+    private  Long Idcommande;
 
     @ManyToOne
     @JoinColumn(name = "menu_id")
