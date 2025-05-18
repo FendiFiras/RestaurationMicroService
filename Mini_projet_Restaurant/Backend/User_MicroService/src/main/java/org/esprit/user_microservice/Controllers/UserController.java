@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.Optional;
 
 
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "http://localhost:4200", allowedHeaders = "*")
 @RestController
 @RequestMapping("/users")
 public class UserController {
@@ -31,12 +31,12 @@ public class UserController {
         return userService.addUser(user);
     }
 
-    @GetMapping
+    @GetMapping("/show")
     public List<User> getAllUsers() {
         return userService.getAllUsers();
     }
 
-    @PutMapping("/{idUser}")
+    @PutMapping("/update/{idUser}")
     public User modifyUser(@PathVariable Long idUser, @RequestBody User user) {
         return userService.modifyUser(idUser, user);
     }
@@ -46,7 +46,7 @@ public class UserController {
         userService.deleteUser(id);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/showbyid/{id}")
     public User retrieveUser(@PathVariable Long id) {
         return userService.retrieveUser(id);
     }

@@ -20,14 +20,8 @@ public class Livraison {
     private String destination;
     private String status;
     private LocalDate deliveryDate;
-
-  
-
     private Double latitude;
-
     private Double longitude;
-
-
     private String recipientName;
     private String deliveryAgent;
 }

@@ -9,8 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class AvisService {
@@ -69,5 +72,23 @@ public class AvisService {
             return avisRepository.findByCommentaireContaining(keyword);
         }
     }
+    public Map<String, Object> getAvisStatistics() {
+        List<Integer> notes = avisRepository.findAllNotes();
 
+        long total = notes.size();
+        double average = notes.stream()
+                .mapToInt(Integer::intValue)
+                .average()
+                .orElse(0.0);
+
+        Map<Integer, Long> countByNote = notes.stream()
+                .collect(Collectors.groupingBy(n -> n, Collectors.counting()));
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("totalAvis", total);
+        result.put("averageNote", average);
+        result.put("countByNote", countByNote);
+
+        return result;
+    }
 }

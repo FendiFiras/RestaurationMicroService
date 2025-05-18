@@ -11,8 +11,8 @@
 	<groupId>org.esprit</groupId>
 	<artifactId>LivraisonMicroService</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>CommandeMicroService</name>
-	<description>CommandeMicroService</description>
+	<name>LivraisonMicroService</name>
+	<description>LivraisonMicroService</description>
 
 
 	<url/>

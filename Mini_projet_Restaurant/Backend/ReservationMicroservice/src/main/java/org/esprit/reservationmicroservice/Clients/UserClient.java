@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 @FeignClient(name = "user-client", url = "http://localhost:8087")
 public interface UserClient {
-    @GetMapping("/users/{id}")
+    @GetMapping("/users/showbyid/{id}")
     User getUtilisateur(@PathVariable("id") Long id);
 
     @GetMapping("/users/users/{id}")

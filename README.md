@@ -33,6 +33,8 @@ Le projet a pour but de :
 - **MySQL** pour la base de données
 - **Lombok** pour réduire le boilerplate
 - **Postman** pour les tests API
+-  **Keycloack**.
+
 
 ## 🔍 Fonctionnalités Clés
 - 🧠 Microservice de Recommandation Intelligente :

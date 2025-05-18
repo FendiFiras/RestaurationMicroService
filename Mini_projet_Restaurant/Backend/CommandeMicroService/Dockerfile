@@ -1,8 +1,7 @@
-FROM openjdk:17-jdk-slim
-LABEL authors="GIGABYTE"
+FROM openjdk:17
+WORKDIR /app
 
-EXPOSE 8082
+COPY target/commande-microservice-0.0.1-SNAPSHOT.jar app.jar
 
-ADD target/CommandeMicroService-0.0.1-SNAPSHOT.jar commande.jar
-
-ENTRYPOINT ["java", "-jar", "commande.jar"]
+EXPOSE 8081
+ENTRYPOINT ["java", "-jar", "app.jar"]
