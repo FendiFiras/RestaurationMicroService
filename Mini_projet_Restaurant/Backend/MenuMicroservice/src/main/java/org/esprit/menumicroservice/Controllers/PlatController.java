@@ -2,9 +2,12 @@ package org.esprit.menumicroservice.Controllers;
 
 import org.esprit.menumicroservice.Entities.Plat;
 import org.esprit.menumicroservice.Services.PlatService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/Menu/plats")
@@ -53,6 +56,21 @@ public class PlatController {
     public Plat rouletteDuPlatMystere() {
         return platService.getPlatMystereAvecReduction();
     }
+
+
+    @PutMapping("/{idPlat}/associerCommande")
+    public ResponseEntity<?> associerCommande(@PathVariable Long idPlat,
+                                              @RequestParam Long idCommande) {
+        try {
+            Plat updatedPlat = platService.associerPlatACommande(idPlat, idCommande);
+            return ResponseEntity.ok(updatedPlat);
+        } catch (RuntimeException e) {
+            // Retourner 404 avec un message clair
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", e.getMessage()));
+        }
+    }
+
 
 
 }

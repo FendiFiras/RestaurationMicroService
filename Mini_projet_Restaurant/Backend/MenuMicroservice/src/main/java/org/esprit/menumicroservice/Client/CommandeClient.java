@@ -1,20 +1,13 @@
 package org.esprit.menumicroservice.Client;
 
-import org.esprit.menumicroservice.Dto.Commande; // Crée ce DTO pour refléter l'entité Commande
+import org.esprit.menumicroservice.Dto.Commande;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
-import java.util.List;
-import java.util.Map;
-
-@FeignClient(name = "CommandeMicroService") // si Eureka est activé
+@FeignClient(name = "CommandeMicroService",url = "http://localhost:8081")
 public interface CommandeClient {
 
-
-
-    @GetMapping("/commande/Gett_All_Commandes")
-    List<Commande> getAllCommandes();
-
-
+    @GetMapping("/commande/GetoneByID/{id}")
+    Commande getCommandeById(@PathVariable("id") Long id);
 }

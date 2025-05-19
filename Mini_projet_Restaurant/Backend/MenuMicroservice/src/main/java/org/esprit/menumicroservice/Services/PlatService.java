@@ -1,10 +1,13 @@
 package org.esprit.menumicroservice.Services;
 
+import org.esprit.menumicroservice.Client.CommandeClient;
+import org.esprit.menumicroservice.Dto.Commande;
 import org.esprit.menumicroservice.Entities.Menu;
 import org.esprit.menumicroservice.Entities.Plat;
 import org.esprit.menumicroservice.Entities.PlatSpecification;
 import org.esprit.menumicroservice.Repo.MenuRepository;
 import org.esprit.menumicroservice.Repo.PlatRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +18,8 @@ import java.util.Random;
 public class PlatService {
     private final PlatRepository platRepository;
     private final MenuRepository menuRepository; // Inject MenuRepository to fetch the Menu by id
+    @Autowired
+    private CommandeClient commandeClient;
 
 
     public PlatService(PlatRepository platRepository, MenuRepository menuRepository) {
@@ -93,5 +98,16 @@ public class PlatService {
         return platAvecReduction;
     }
 
+    public Plat associerPlatACommande(Long idPlat, Long idCommande) {
+        Plat plat = platRepository.findById(idPlat)
+                .orElseThrow(() -> new RuntimeException("Plat introuvable"));
 
+        Commande commande = commandeClient.getCommandeById(idCommande);
+        if (commande == null || commande.getIdCommande() == null) {
+            throw new RuntimeException("Commande doesn't exist");
+        }
+
+        plat.setIdCommande(idCommande);
+        return platRepository.save(plat);
+    }
 }

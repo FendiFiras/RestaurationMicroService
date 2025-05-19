@@ -1,6 +1,7 @@
 package org.esprit.menumicroservice.Entities;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 @Entity
 public class Plat {
@@ -14,7 +15,7 @@ public class Plat {
     private Double prix;
 
     private String description;
-    private  Long Idcommande;
+    private Long idCommande; // ✔ bon nom de champ
 
     @ManyToOne
     @JoinColumn(name = "menu_id")
@@ -61,4 +62,13 @@ public class Plat {
     public void setMenu(Menu menu) {
         this.menu = menu;
     }
+
+    public Long getIdCommande() {
+        return idCommande;
+    }
+
+    public void setIdCommande(Long idCommande) {
+        this.idCommande = idCommande;
+    }
+
 }
